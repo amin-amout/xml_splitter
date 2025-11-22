@@ -325,6 +325,8 @@ val validated = df.withColumn(
 ```bash
 # Increase heap size
 scala -Xmx8g -cp build/jar/xml2hive.jar XmlStreamingSplitter ...
+
+Example : java -cp target/xml2hive.jar XmlStreamingSplitter orders_50gb.xml test-chunks Order 100
 ```
 
 ### OutOfMemory in Spark
