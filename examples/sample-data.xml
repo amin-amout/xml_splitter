@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Orders>
+  <!-- Sample e-commerce orders for testing -->
+  
+  <Order OrderID="10001" OrderDate="2025-11-15" Status="Shipped">
+    <Customer CustomerID="C1001" Name="John Doe" Email="john.doe@example.com" MemberSince="2020-01-15"/>
+    <ShippingAddress>
+      <Street>123 Main Street</Street>
+      <City>Springfield</City>
+      <State>IL</State>
+      <ZipCode>62701</ZipCode>
+      <Country>USA</Country>
+    </ShippingAddress>
+    <BillingAddress>
+      <Street>123 Main Street</Street>
+      <City>Springfield</City>
+      <State>IL</State>
+      <ZipCode>62701</ZipCode>
+      <Country>USA</Country>
+    </BillingAddress>
+    <OrderItems>
+      <Item ItemID="A100" ProductName="Wireless Mouse" Category="Electronics" Quantity="2" UnitPrice="29.99">
+        <Discount Type="Percentage">10</Discount>
+        <Tax>4.80</Tax>
+      </Item>
+      <Item ItemID="A101" ProductName="USB Cable" Category="Electronics" Quantity="3" UnitPrice="9.99">
+        <Discount Type="Fixed">0</Discount>
+        <Tax>2.40</Tax>
+      </Item>
+    </OrderItems>
+    <Payment PaymentMethod="CreditCard" CardType="Visa" LastFourDigits="1234" Amount="91.37"/>
+    <Notes>Gift wrap requested</Notes>
+    <Tags>
+      <Tag>priority</Tag>
+      <Tag>gift</Tag>
+    </Tags>
+  </Order>
+  
+  <Order OrderID="10002" OrderDate="2025-11-16" Status="Processing">
+    <Customer CustomerID="C1002" Name="Jane Smith" Email="jane.smith@example.com" MemberSince="2021-06-20"/>
+    <ShippingAddress>
+      <Street>456 Oak Avenue</Street>
+      <City>Portland</City>
+      <State>OR</State>
+      <ZipCode>97201</ZipCode>
+      <Country>USA</Country>
+    </ShippingAddress>
+    <BillingAddress>
+      <Street>456 Oak Avenue</Street>
+      <City>Portland</City>
+      <State>OR</State>
+      <ZipCode>97201</ZipCode>
+      <Country>USA</Country>
+    </BillingAddress>
+    <OrderItems>
+      <Item ItemID="B200" ProductName="Laptop Stand" Category="Accessories" Quantity="1" UnitPrice="49.99">
+        <Discount Type="Percentage">15</Discount>
+        <Tax>3.60</Tax>
+      </Item>
+      <Item ItemID="B201" ProductName="Keyboard" Category="Electronics" Quantity="1" UnitPrice="79.99">
+        <Discount Type="Fixed">10</Discount>
+        <Tax>5.60</Tax>
+      </Item>
+      <Item ItemID="B202" ProductName="Monitor" Category="Electronics" Quantity="1" UnitPrice="299.99">
+        <Discount Type="Percentage">5</Discount>
+        <Tax>25.50</Tax>
+      </Item>
+    </OrderItems>
+    <Payment PaymentMethod="PayPal" Amount="449.17"/>
+    <Notes></Notes>
+    <Tags>
+      <Tag>bulk</Tag>
+    </Tags>
+  </Order>
+  
+  <Order OrderID="10003" OrderDate="2025-11-17" Status="Cancelled">
+    <Customer CustomerID="C1003" Name="Bob Johnson" Email="bob.j@example.com" MemberSince="2019-03-10"/>
+    <ShippingAddress>
+      <Street>789 Pine Road</Street>
+      <City>Austin</City>
+      <State>TX</State>
+      <ZipCode>78701</ZipCode>
+      <Country>USA</Country>
+    </ShippingAddress>
+    <BillingAddress>
+      <Street>789 Pine Road</Street>
+      <City>Austin</City>
+      <State>TX</State>
+      <ZipCode>78701</ZipCode>
+      <Country>USA</Country>
+    </BillingAddress>
+    <OrderItems>
+      <Item ItemID="C300" ProductName="Headphones" Category="Electronics" Quantity="1" UnitPrice="199.99">
+        <Discount Type="Fixed">20</Discount>
+        <Tax>14.40</Tax>
+      </Item>
+    </OrderItems>
+    <Payment PaymentMethod="CreditCard" CardType="MasterCard" LastFourDigits="5678" Amount="194.39"/>
+    <Notes>Customer requested cancellation</Notes>
+    <Tags>
+      <Tag>cancelled</Tag>
+      <Tag>refunded</Tag>
+    </Tags>
+  </Order>
+  
+  <Order OrderID="10004" OrderDate="2025-11-18" Status="Delivered">
+    <Customer CustomerID="C1001" Name="John Doe" Email="john.doe@example.com" MemberSince="2020-01-15"/>
+    <ShippingAddress>
+      <Street>123 Main Street</Street>
+      <City>Springfield</City>
+      <State>IL</State>
+      <ZipCode>62701</ZipCode>
+      <Country>USA</Country>
+    </ShippingAddress>
+    <BillingAddress>
+      <Street>123 Main Street</Street>
+      <City>Springfield</City>
+      <State>IL</State>
+      <ZipCode>62701</ZipCode>
+      <Country>USA</Country>
+    </BillingAddress>
+    <OrderItems>
+      <Item ItemID="D400" ProductName="Coffee Maker" Category="Appliances" Quantity="1" UnitPrice="89.99">
+        <Discount Type="Percentage">20</Discount>
+        <Tax>5.76</Tax>
+      </Item>
+      <Item ItemID="D401" ProductName="Coffee Beans (1kg)" Category="Groceries" Quantity="2" UnitPrice="24.99">
+        <Discount Type="Fixed">0</Discount>
+        <Tax>4.00</Tax>
+      </Item>
+    </OrderItems>
+    <Payment PaymentMethod="DebitCard" CardType="Visa" LastFourDigits="9012" Amount="126.73"/>
+    <Notes>Contactless delivery</Notes>
+    <Tags>
+      <Tag>repeat-customer</Tag>
+    </Tags>
+  </Order>
+  
+  <Order OrderID="10005" OrderDate="2025-11-19" Status="Shipped">
+    <Customer CustomerID="C1004" Name="Alice Williams" Email="alice.w@example.com" MemberSince="2022-08-05"/>
+    <ShippingAddress>
+      <Street>321 Elm Street</Street>
+      <City>Seattle</City>
+      <State>WA</State>
+      <ZipCode>98101</ZipCode>
+      <Country>USA</Country>
+    </ShippingAddress>
+    <BillingAddress>
+      <Street>321 Elm Street</Street>
+      <City>Seattle</City>
+      <State>WA</State>
+      <ZipCode>98101</ZipCode>
+      <Country>USA</Country>
+    </BillingAddress>
+    <OrderItems>
+      <Item ItemID="E500" ProductName="Desk Lamp" Category="Furniture" Quantity="2" UnitPrice="34.99">
+        <Discount Type="Percentage">0</Discount>
+        <Tax>5.60</Tax>
+      </Item>
+    </OrderItems>
+    <Payment PaymentMethod="ApplePay" Amount="75.58"/>
+    <Notes></Notes>
+    <Tags>
+      <Tag>new-customer</Tag>
+    </Tags>
+  </Order>
+  
+  <Order OrderID="10006" OrderDate="2025-11-20" Status="Processing">
+    <Customer CustomerID="C1005" Name="Charlie Brown" Email="charlie.b@example.com" MemberSince="2023-01-12"/>
+    <ShippingAddress>
+      <Street>654 Maple Drive</Street>
+      <City>Denver</City>
+      <State>CO</State>
+      <ZipCode>80201</ZipCode>
+      <Country>USA</Country>
+    </ShippingAddress>
+    <BillingAddress>
+      <Street>654 Maple Drive</Street>
+      <City>Denver</City>
+      <State>CO</State>
+      <ZipCode>80201</ZipCode>
+      <Country>USA</Country>
+    </BillingAddress>
+    <OrderItems>
+      <Item ItemID="F600" ProductName="Gaming Chair" Category="Furniture" Quantity="1" UnitPrice="349.99">
+        <Discount Type="Fixed">50</Discount>
+        <Tax>24.00</Tax>
+      </Item>
+      <Item ItemID="F601" ProductName="Desk Mat" Category="Accessories" Quantity="1" UnitPrice="19.99">
+        <Discount Type="Percentage">0</Discount>
+        <Tax>1.60</Tax>
+      </Item>
+      <Item ItemID="F602" ProductName="Cable Management Box" Category="Accessories" Quantity="1" UnitPrice="15.99">
+        <Discount Type="Percentage">0</Discount>
+        <Tax>1.28</Tax>
+      </Item>
+    </OrderItems>
+    <Payment PaymentMethod="CreditCard" CardType="Amex" LastFourDigits="3456" Amount="362.85"/>
+    <Notes>Assembly required</Notes>
+    <Tags>
+      <Tag>heavy-item</Tag>
+      <Tag>white-glove</Tag>
+    </Tags>
+  </Order>
+  
+</Orders>

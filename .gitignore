@@ -1,0 +1,59 @@
+
+# Maven build output
+target/
+build/
+project/target/
+project/project/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.metals/
+.bsp/
+.scala-build/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+derby.log
+
+# Compiled class/JAR files
+*.class
+*.jar
+!target/*.jar
+.scala_dependencies
+.cache
+.history
+.lib/
+
+# Editor swap/backup files
+*.swp
+*~
+*.bak
+*.tmp
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Spark/Parquet output
+*.parquet
+*.snappy
+_SUCCESS
+spark-warehouse/
+metastore_db/
+
+# Test and output directories
+chunks/
+output/
+test-chunks/
+test-output/
