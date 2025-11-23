@@ -9,9 +9,9 @@ def write_line(f, text, indent=0):
 # ------------------------------
 # TUNABLE PARAMETERS FOR SIZE
 # ------------------------------
-NUM_ORDERS = 10000        # Increase to reach 50 GB
+NUM_ORDERS = 5000        # Increase to reach 50 GB
 ITEMS_PER_ORDER = 10000            # average number of items
-TAGS_PER_ORDER = 20000             # tags per order
+TAGS_PER_ORDER = 10000             # tags per order
 
 # For reproducible randomness
 random.seed(1234)

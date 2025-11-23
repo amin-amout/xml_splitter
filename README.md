@@ -105,8 +105,10 @@ vim scripts/run_splitter.sh
 ./scripts/run_splitter.sh
 ```
 
+
 Or run directly:
 
+#### Local file example
 ```bash
 java -Xmx4g -cp target/xml2hive.jar \
   XmlStreamingSplitter \
@@ -116,11 +118,38 @@ java -Xmx4g -cp target/xml2hive.jar \
   1000
 ```
 
-**Arguments:**
+#### HDFS example
+```bash
+java -Xmx4g -cp target/xml2hive.jar \
+  XmlStreamingSplitter \
+  --hdfs \
+  hdfs:///input/huge-file.xml \
+  hdfs:///output/chunks \
+  Record \
+  1000 \
+  localhost \
+  9010
+```
+### HDFS from namenode
+
+```
+java -cp "$(hadoop classpath):xml2hive.jar" XmlStreamingSplitter --hdfs hdfs:///data/orders/orders_50gb.xml hdfs:///data/chunks Orders 100 172.19.0.5 9000
+```
+
+**Arguments (local):**
 1. Input XML file path
 2. Output directory for chunks
 3. Row tag name (e.g., `Record`, `Customer`, `Transaction`)
 4. Max records per chunk file (default: 1000)
+
+**Arguments (HDFS):**
+1. `--hdfs` (flag to enable HDFS mode)
+2. Input HDFS XML file path (e.g., `hdfs:///input/huge-file.xml`)
+3. Output HDFS directory (e.g., `hdfs:///output/chunks`)
+4. Row tag name
+5. Max records per chunk file (default: 1000)
+6. HDFS host (default: `localhost`)
+7. HDFS port (default: `9010`)
 
 ### Step 3: Upload Chunks
 

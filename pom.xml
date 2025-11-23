@@ -55,6 +55,20 @@
             <version>${spark-xml.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Hadoop dependencies for HDFS support in splitter (match Spark 3.3.x) -->
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-common</artifactId>
+            <version>3.3.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-hdfs</artifactId>
+            <version>3.3.1</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

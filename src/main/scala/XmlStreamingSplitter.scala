@@ -23,35 +23,56 @@ object XmlStreamingSplitter {
     outputDir: String,
     rowTag: String,
     maxRecordsPerFile: Int = 1000,
-    targetChunkSizeMB: Int = 50
+    targetChunkSizeMB: Int = 50,
+    useHdfs: Boolean = false,
+    hdfsHost: String = "localhost",
+    hdfsPort: Int = 9010
   )
 
   def main(args: Array[String]): Unit = {
+
     if (args.length < 3) {
-      System.err.println("Usage: XmlStreamingSplitter <inputFile> <outputDir> <rowTag> [maxRecordsPerFile]")
+      System.err.println("Usage (local): XmlStreamingSplitter <inputFile> <outputDir> <rowTag> [maxRecordsPerFile]")
+      System.err.println("Usage (HDFS):  XmlStreamingSplitter --hdfs <inputHdfsPath> <outputHdfsDir> <rowTag> [maxRecordsPerFile] [hdfsHost] [hdfsPort]")
       System.err.println("Example: XmlStreamingSplitter data.xml chunks/ Record 1000")
+      System.err.println("Example: XmlStreamingSplitter --hdfs hdfs:///input.xml hdfs:///chunks Record 1000 localhost 9010")
       System.exit(1)
     }
 
-    val config = Config(
-      inputFile = args(0),
-      outputDir = args(1),
-      rowTag = args(2),
-      maxRecordsPerFile = if (args.length > 3) args(3).toInt else 1000
-    )
+    val (config, mode) =
+      if (args(0) == "--hdfs") {
+        val maxRecords = if (args.length > 4) args(4).toInt else 1000
+        val hdfsHost = if (args.length > 5) args(5) else "localhost"
+        val hdfsPort = if (args.length > 6) args(6).toInt else 9010
+        (Config(
+          inputFile = args(1),
+          outputDir = args(2),
+          rowTag = args(3),
+          maxRecordsPerFile = maxRecords,
+          useHdfs = true,
+          hdfsHost = hdfsHost,
+          hdfsPort = hdfsPort
+        ), "hdfs")
+      } else {
+        (Config(
+          inputFile = args(0),
+          outputDir = args(1),
+          rowTag = args(2),
+          maxRecordsPerFile = if (args.length > 3) args(3).toInt else 1000
+        ), "local")
+      }
 
-    println(s"[XML Splitter] Starting XML chunking process")
+    println(s"[XML Splitter] Starting XML chunking process ($mode mode)")
     println(s"[XML Splitter] Input: ${config.inputFile}")
     println(s"[XML Splitter] Output: ${config.outputDir}")
     println(s"[XML Splitter] Row tag: <${config.rowTag}>")
     println(s"[XML Splitter] Max records per file: ${config.maxRecordsPerFile}")
+    if (config.useHdfs) println(s"[XML Splitter] HDFS: ${config.hdfsHost}:${config.hdfsPort}")
     println()
 
     val startTime = System.currentTimeMillis()
-    
     try {
-      splitXml(config)
-      
+      if (config.useHdfs) splitXmlHdfs(config) else splitXml(config)
       val duration = (System.currentTimeMillis() - startTime) / 1000.0
       println(s"\n[XML Splitter] ✓ Completed successfully in ${duration}s")
     } catch {
@@ -59,6 +80,140 @@ object XmlStreamingSplitter {
         System.err.println(s"\n[XML Splitter] ✗ FAILED: ${e.getMessage}")
         e.printStackTrace()
         System.exit(1)
+    }
+    // HDFS version of splitXml
+    def splitXmlHdfs(config: Config): Unit = {
+      import org.apache.hadoop.conf.Configuration
+      import org.apache.hadoop.fs.{FileSystem, Path, FSDataInputStream, FSDataOutputStream}
+
+      val conf = new Configuration()
+      conf.set("fs.defaultFS", s"hdfs://${config.hdfsHost}:${config.hdfsPort}")
+      val fs = FileSystem.get(conf)
+
+      // Prepare output dir
+      val outputPath = new Path(config.outputDir)
+      if (!fs.exists(outputPath)) fs.mkdirs(outputPath)
+      println(s"[XML Splitter] HDFS output directory ready: ${config.outputDir}")
+
+      // Input stream from HDFS
+      val inputStream = new BufferedInputStream(fs.open(new Path(config.inputFile)), 8 * 1024 * 1024)
+      val factory = XMLInputFactory.newInstance()
+      factory.setProperty(XMLInputFactory.IS_COALESCING, true)
+      factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, false)
+      val reader = factory.createXMLStreamReader(inputStream)
+
+      var fileIndex = 0
+      var recordCount = 0
+      var totalRecords = 0
+      var currentWriter: Option[BufferedWriter] = None
+      var currentHdfsOut: Option[FSDataOutputStream] = None
+      var insideRowTag = false
+      var depth = 0
+      var recordDepth = 0
+      val recordBuffer = new StringBuilder(1024 * 100)
+      var rootElementName: Option[String] = None
+      var rootAttributes = Map.empty[String, String]
+
+      try {
+        while (reader.hasNext) {
+          val eventType = reader.next()
+          eventType match {
+            case XMLStreamConstants.START_ELEMENT =>
+              val localName = reader.getLocalName
+              if (depth == 0) {
+                rootElementName = Some(localName)
+                rootAttributes = extractAttributes(reader)
+              }
+              if (localName == config.rowTag && !insideRowTag) {
+                insideRowTag = true
+                recordDepth = depth
+                recordBuffer.clear()
+                if (recordCount == 0 || recordCount >= config.maxRecordsPerFile) {
+                  // Close previous writer
+                  currentWriter.foreach { w =>
+                    writeFooter(w, rootElementName)
+                    w.close()
+                  }
+                  currentHdfsOut.foreach(_.close())
+                  // Open new HDFS writer
+                  fileIndex += 1
+                  val chunkFile = new Path(outputPath, f"part-$fileIndex%05d.xml")
+                  val hdfsOut = fs.create(chunkFile, true)
+                  val writer = new BufferedWriter(new OutputStreamWriter(hdfsOut, "UTF-8"), 1024 * 1024)
+                  currentWriter = Some(writer)
+                  currentHdfsOut = Some(hdfsOut)
+                  writeHeader(writer, rootElementName, rootAttributes)
+                  recordCount = 0
+                  if (fileIndex % 10 == 0) {
+                    println(s"[XML Splitter] Created chunk file #$fileIndex (total records: $totalRecords)")
+                  }
+                }
+              }
+              if (insideRowTag) {
+                recordBuffer.append("<").append(localName)
+                for (i <- 0 until reader.getAttributeCount) {
+                  val attrName = reader.getAttributeLocalName(i)
+                  val attrValue = escapeXml(reader.getAttributeValue(i))
+                  recordBuffer.append(s""" $attrName=\"$attrValue\"""")
+                }
+                recordBuffer.append(">")
+              }
+              depth += 1
+            case XMLStreamConstants.END_ELEMENT =>
+              depth -= 1
+              val localName = reader.getLocalName
+              if (insideRowTag) {
+                recordBuffer.append("</").append(localName).append(">")
+                if (localName == config.rowTag && depth == recordDepth) {
+                  insideRowTag = false
+                  currentWriter.foreach { w =>
+                    w.write("  ")
+                    w.write(recordBuffer.toString)
+                    w.write("\n")
+                  }
+                  recordCount += 1
+                  totalRecords += 1
+                  if (totalRecords % 10000 == 0) {
+                    print(s"\r[XML Splitter] Processed: $totalRecords records")
+                    System.out.flush()
+                  }
+                  recordBuffer.clear()
+                }
+              }
+            case XMLStreamConstants.CHARACTERS =>
+              if (insideRowTag) {
+                val text = reader.getText
+                if (text != null && text.trim.nonEmpty) {
+                  recordBuffer.append(escapeXml(text))
+                }
+              }
+            case 12 => // CDATA_SECTION
+              if (insideRowTag) {
+                val text = reader.getText
+                if (text != null && text.trim.nonEmpty) {
+                  recordBuffer.append(escapeXml(text))
+                }
+              }
+            case XMLStreamConstants.COMMENT =>
+            case XMLStreamConstants.PROCESSING_INSTRUCTION =>
+            case _ =>
+          }
+        }
+        // Close final writer
+        currentWriter.foreach { w =>
+          writeFooter(w, rootElementName)
+          w.close()
+        }
+        currentHdfsOut.foreach(_.close())
+        println(s"\r[XML Splitter] Processed: $totalRecords records (complete)")
+        println(s"[XML Splitter] Created $fileIndex chunk files")
+        println(s"[XML Splitter] Average records per file: ${totalRecords.toDouble / fileIndex}")
+      } finally {
+        reader.close()
+        inputStream.close()
+        currentWriter.foreach(_.close())
+        currentHdfsOut.foreach(_.close())
+      }
     }
   }
 
