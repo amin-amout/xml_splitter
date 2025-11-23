@@ -138,19 +138,36 @@ object XmlToParquetPipeline {
   def extractMainTable(spark: SparkSession, df: DataFrame, config: PipelineConfig): Unit = {
     println(s"[Pipeline]   - Extracting main table...")
     
-    // Select flat fields (adjust to your schema)
-    // This is a template - you'll need to customize based on actual XML structure
+
+    // Select only the desired columns to avoid duplicates
+    // Based on sample-data.xml, these are the main flat fields at the Order level
     val mainTable = df.select(
       col("record_id").as("id"),
       col("ingestion_timestamp"),
       col("source_file"),
-      // Add your actual fields here, e.g.:
-      // col("_CustomerID").as("customer_id"),
-      // col("_Name").as("name"),
-      // col("_Email").as("email"),
-      // col("Status._VALUE").as("status"),
-      // coalesce(col("OptionalField._VALUE"), lit(null)).as("optional_field")
-      col("*") // TEMPORARY - replace with specific columns
+      col("_OrderID").as("order_id"),
+      col("_OrderDate").as("order_date"),
+      col("_Status").as("status"),
+      col("Customer._CustomerID").as("customer_id"),
+      col("Customer._Name").as("customer_name"),
+      col("Customer._Email").as("customer_email"),
+      col("Customer._MemberSince").as("customer_member_since"),
+      col("Payment._PaymentMethod").as("payment_method"),
+      col("Payment._CardType").as("payment_card_type"),
+      col("Payment._LastFourDigits").as("payment_last_four"),
+      col("Payment._Amount").as("payment_amount"),
+      col("Notes"),
+      col("ShippingAddress.Street").as("shipping_street"),
+      col("ShippingAddress.City").as("shipping_city"),
+      col("ShippingAddress.State").as("shipping_state"),
+      col("ShippingAddress.ZipCode").as("shipping_zip"),
+      col("ShippingAddress.Country").as("shipping_country"),
+      col("BillingAddress.Street").as("billing_street"),
+      col("BillingAddress.City").as("billing_city"),
+      col("BillingAddress.State").as("billing_state"),
+      col("BillingAddress.ZipCode").as("billing_zip"),
+      col("BillingAddress.Country").as("billing_country")
+      // Add more fields as needed from your XML structure
     )
 
     // Write to Parquet with partitioning

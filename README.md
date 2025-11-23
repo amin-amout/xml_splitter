@@ -190,9 +190,9 @@ vim scripts/run_spark_databricks.sh
 spark-submit \
   --master yarn \
   --deploy-mode cluster \
-  --executor-memory 8G \
-  --executor-cores 4 \
-  --num-executors 10 \
+  --executor-memory 4G \
+  --executor-cores 2 \
+  --num-executors 2 \
   --driver-memory 4G \
   --conf spark.sql.shuffle.partitions=400 \
   --packages com.databricks:spark-xml_2.12:0.17.0 \
@@ -202,7 +202,21 @@ spark-submit \
   hdfs:///data/output/tables \
   Record
 ```
+Example : 
+```bash
+  spark/bin/spark-submit \
+  --master local[*] \
+  --executor-memory 4G \
+  --driver-memory 4G \
+  --conf spark.sql.shuffle.partitions=4 \
+  --packages com.databricks:spark-xml_2.12:0.17.0 \
+  --class XmlToParquetPipeline \
+  xml2hive.jar \
+  hdfs://namenode:9000/data/chunks \
+  hdfs://namenode:9000/data/tables \
+  Order
 
+```
 ### Step 5: Verify Output
 
 ```bash
