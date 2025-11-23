@@ -217,6 +217,34 @@ Example :
   Order
 
 ```
+
+Example for mapping:
+
+```bash
+  spark/bin/spark-submit \
+  --master local[*] \
+  --executor-memory 4G \
+  --driver-memory 4G \
+  --conf spark.sql.shuffle.partitions=4 \
+  --packages com.databricks:spark-xml_2.12:0.17.0 \
+  --class XmlToParquetPipeline \
+  xml2hive.jar \
+  hdfs://namenode:9000/data/chunks \
+  hdfs://namenode:9000/data/tables \
+  Order \
+  mapping.json
+
+```
+
+
+Run test unit for mapping :
+
+```bash
+
+mvn exec:java -Dexec.mainClass=test.MappingJsonTest -Dexec.classpathScope=test -Dexec.args=conf/mapping.json -e
+
+```
+
 ### Step 5: Verify Output
 
 ```bash

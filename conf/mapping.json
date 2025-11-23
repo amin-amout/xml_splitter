@@ -1,0 +1,44 @@
+{
+  "main_table": [
+    { "column": "id", "source": "record_id" },
+    { "column": "ingestion_timestamp", "source": "ingestion_timestamp" },
+    { "column": "source_file", "source": "source_file" },
+    { "column": "order_id", "source": "_OrderID" },
+    { "column": "order_date", "source": "_OrderDate" },
+    { "column": "status", "source": "_Status" },
+    { "column": "customer_id", "source": "Customer._CustomerID" },
+    { "column": "customer_name", "source": "Customer._Name" },
+    { "column": "customer_email", "source": "Customer._Email" },
+    { "column": "customer_member_since", "source": "Customer._MemberSince" },
+    { "column": "payment_method", "source": "Payment._PaymentMethod" },
+    { "column": "payment_card_type", "source": "Payment._CardType" },
+    { "column": "payment_last_four", "source": "Payment._LastFourDigits" },
+    { "column": "payment_amount", "source": "Payment._Amount" },
+    { "column": "notes", "source": "Notes" },
+    { "column": "shipping_street", "source": "ShippingAddress.Street" },
+    { "column": "shipping_city", "source": "ShippingAddress.City" },
+    { "column": "shipping_state", "source": "ShippingAddress.State" },
+    { "column": "shipping_zip", "source": "ShippingAddress.ZipCode" },
+    { "column": "shipping_country", "source": "ShippingAddress.Country" },
+    { "column": "billing_street", "source": "BillingAddress.Street" },
+    { "column": "billing_city", "source": "BillingAddress.City" },
+    { "column": "billing_state", "source": "BillingAddress.State" },
+    { "column": "billing_zip", "source": "BillingAddress.ZipCode" },
+    { "column": "billing_country", "source": "BillingAddress.Country" }
+  ],
+  "order_item_table": [
+    { "column": "parent_id", "source": "record_id" },
+    { "column": "item_id", "source": "OrderItems.Item._ItemID" },
+    { "column": "product_name", "source": "OrderItems.Item._ProductName" },
+    { "column": "category", "source": "OrderItems.Item._Category" },
+    { "column": "quantity", "source": "OrderItems.Item._Quantity" },
+    { "column": "unit_price", "source": "OrderItems.Item._UnitPrice" },
+    { "column": "discount_type", "source": "OrderItems.Item.Discount._Type" },
+    { "column": "discount_value", "source": "OrderItems.Item.Discount._VALUE" },
+    { "column": "tax", "source": "OrderItems.Item.Tax" }
+  ],
+  "tags_table": [
+    { "column": "parent_id", "source": "record_id" },
+    { "column": "tag", "source": "Tags.Tag" }
+  ]
+}
